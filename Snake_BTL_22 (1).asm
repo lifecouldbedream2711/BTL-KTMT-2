@@ -204,7 +204,7 @@ choi proc
     them_toa_do_snake snake_x, snake_y  ;them toa do ran ban dau  
     call in_ran                         ;in hinh con ran ban dau
     ;khoi tao 5 qua tao ban dau
-    mov cx, 5      ;so qua tao ban dau luu vao thanh ghi cx = 5
+    mov cx, 10D      ;so qua tao ban dau luu vao thanh ghi cx = 5
     sinh_tao_ban_dau:
          call sinh_apple        ;goi chuong trinh con sinh ngau nhien 1 qua tao
     loop sinh_tao_ban_dau
@@ -286,15 +286,15 @@ sang_phai:
         di_chuyen_con_tro snake_x, snake_y      ;di chuyen con tro toi vi tri dau con ran moi
         mov ah, 8                       ;chon che do doc ki tu tai vi tri con tro ham ngat 10h/08h
         mov bh, 0                       ;so trang man hinh
-        int 10h                         ;thuc hien lenh doc ki tu tai vi tri con tro   
+        int 10h
         
+        cmp al,' '                          ;thuc hien lenh doc ki tu tai vi tri con tro   
+        je lap_tiep
         ;kiem tra con ran co dam hang rao khong
         cmp al, '#'                     ;so sanh ki tu voi hang rao '#'
         je game_over                    ;neu co thi thua luon  
         
         ;kiem tra con ran co dam vao chinh khuc cua minh khong
-        cmp al, '.'                     ;so sanh ki tu voi ki tu duoi cua con ran
-        je game_over                    ;neu co thi thua luon
         cmp al, 'x'                     ;so sanh ki tu voi ki tu than cua con ran
         je game_over                    ;nhay toi nhan thua cuoc
        
@@ -316,30 +316,29 @@ sang_phai:
         ;tang chieu dai con ran
         them_toa_do_snake snake_x, snake_y      ;them toa do qua tao vua an vao mang luu phan than con ran
 
-        ; In ð?u m?i (không c?n g?i l?i in_ran)
+        ; In Ã°?u m?i (khÃ´ng c?n g?i l?i in_ran)
         mov al, snake_x
         mov bl, snake_y
-        gan_toa_do al, bl, 'x'                 ;in ð?u m?i
-
-        call sinh_apple                        ;sinh ra qua tao moi
+        gan_toa_do al, bl, 'x'                 ;in Ã°?u m?i
+                     
         jmp game_loop                          ;tiep tuc tro choi
     
     lap_tiep:
-        ; Xóa ðuôi c?
+        ; XÃ³a Ã°uÃ´i c?
         lea di, toa_do_x
         lea si, toa_do_y
-        mov al, [di]        ; l?y x ðuôi
-        mov bl, [si]        ; l?y y ðuôi
-        gan_toa_do al, bl, ' '   ; xóa ðuôi
+        mov al, [di]        ; l?y x Ã°uÃ´i
+        mov bl, [si]        ; l?y y Ã°uÃ´i
+        gan_toa_do al, bl, ' '   ; xÃ³a Ã°uÃ´i
 
-        ; C?p nh?t m?ng t?a ð?
+        ; C?p nh?t m?ng t?a Ã°?
         toa_do_moi toa_do_x, snake_x
         toa_do_moi toa_do_y, snake_y
 
-        ; In ð?u m?i
+        ; In Ã°?u m?i
         mov al, snake_x
         mov bl, snake_y
-        gan_toa_do al, bl, 'x'   ; in ð?u m?i
+        gan_toa_do al, bl, 'x'   ; in Ã°?u m?i
 
         jmp game_loop
     
@@ -348,10 +347,23 @@ sang_phai:
 choi endp
 
 ;ham sinh 1 qua tao moi
-sinh_apple proc 
+sinh_apple proc
+    push ax
+    push bx 
+   sinh:
     ngau_nhien begin_row, end_row, app_x            ;tao toa_do_x cua qua tao
     ngau_nhien begin_column, end_column, app_y      ;tao toa_do_y cua qua tao
-    gan_toa_do app_x, app_y, 'O'                    ;in ra qua tao moi
+    di_chuyen_con_tro app_x, app_y      ;di chuyen con tro toi vi tri dau con ran moi
+    mov ah, 8                       ;chon che do doc ki tu tai vi tri con tro ham ngat 10h/08h
+    mov bh, 0                       ;so trang man hinh
+    int 10h
+    cmp al,'x'                  ;kiem tra vi tri co trung voi dau ran khong
+    je sinh 
+    cmp al,'O'                      ;kiem tra vi tri co trung voi 1 qua tao khac khong
+    je sinh
+    gan_toa_do app_x, app_y, 'O'    ;in ra qua tao moi
+    pop bx                    
+    pop ax
     ret
 sinh_apple endp
 
@@ -364,15 +376,13 @@ in_ran proc
     mov cl, len_snake                      ;luu chieu dai con ran vao thanh ghi cl
     cmp cx, 1                              ;kiem tra chieu dai = 1 thi chi in dau con ran
     jng ket                                ;thuc hien in dau con ran
-    gan_toa_do [di], [si], '.'             ;in duoi con ran
     
     inc di                                 ;tang chi so di (de in phan than con ran)
     inc si                                 ;tang chi so si (de in phan than con ran)
     lapin:
         dec cx                             ;giam so than ran can in (vi da in cai duoi)
         cmp cx, 1                          ;kiem tra in het than con ran chua
-        jng ket                            ;in het than con ran thi ket thuc va in dau con ran
-        gan_toa_do [di], [si], 'x'         ;in than con ran
+        jng ket                            ;in het than con ran thi ket thuc va in dau con ran        ;in than con ran
         
         inc si                             ;tang chi so di
         inc di                             ;tang chi so si
