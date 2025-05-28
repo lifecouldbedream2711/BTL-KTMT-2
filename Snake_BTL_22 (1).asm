@@ -49,7 +49,7 @@
      old_key db 'g'                                                   ;huong cu cua con ran
      border_row db 40 dup("#"), "$"                                   ;hang rao nam ngang
      score_max db 5                                                  ;diem toi da
-     than_ran db 'x'
+     than_ran db 'x'         
 .code
 
 ;sinh ngau nhien 1 so c trong khoang tu a toi b (la so chan)
@@ -166,25 +166,24 @@ in_thong_bao macro a
 in_thong_bao endm
 
 main proc
-    mov ax, @data    ;di chuyen dia chi du lieu vao thanh ghi ax               
-    mov ds, ax       ;cap nhat thanh ghi ds voi gia tri trong ax
-    mov es, ax       ;cap nhat thanh ghi es voi gia tri trong ax
-    ;thiet lap che do man hinh hien thi
-    mov ah, 0        ;tao man hinh moi ham ngat 10h
-    mov al, 3        ;chon kich thuoc man hinh 80x25
-    int 10h          ;thuc hien tao man hinh kich thuoc 80x25    
+    mov ax, @data       ;di chuyen dia chi du lieu vao thanh ghi ax               
+    mov ds, ax          ;cap nhat thanh ghi ds voi gia tri trong ax
+    mov es, ax          ;cap nhat thanh ghi es voi gia tri trong ax
     
-   ;Print title
-   LEA DX, TITLE_TEXT
-   MOV AH, 9
-   INT 21h
+    mov ah, 0           ;tao man hinh moi ham ngat 10h
+    mov al, 3           ;chon kich thuoc man hinh 80x25
+    int 10h             ;thuc hien tao man hinh kich thuoc 80x25    
+    
+    ;Print title
+    LEA DX, TITLE_TEXT
+    MOV AH, 9
+    INT 21h
     
     mov ah, 1                ;che do nhap 1 ki tu tu ban phim
     int 21h                  ;goi ham ngat 21h de lay 1 ki tu vua nhap (nhap 1 ki tu bat ki de sang phan tiep theo)
     
     call huongdan            ;hien thi thong bao huong dan choi
     mov dx, 0                ;luu thanh dh, dl bang 0
-    di_chuyen_con_tro dh, dl ;dau con tro
     
     mov ah, 1                ;che do nhap 1 ki tu tu ban phim
     int 21h                  ;goi ham ngat 21h de lay 1 ki tu vua nhap (nhap 1 ki tu bat ki de sang phan tiep theo) 
