@@ -46,10 +46,10 @@
      app_y db ?
      len_snake db 0                                                   ;do dai hien tai cua ran
      score db 0                                                       ;diem nguoi choi
-     score_max db 10                                                  ;diem toi da
      old_key db 'g'                                                   ;huong cu cua con ran
      border_row db 40 dup("#"), "$"                                   ;hang rao nam ngang
-
+     score_max db 5                                                  ;diem toi da
+     than_ran db 'x'
 .code
 
 ;sinh ngau nhien 1 so c trong khoang tu a toi b (la so chan)
@@ -204,7 +204,8 @@ choi proc
     them_toa_do_snake snake_x, snake_y  ;them toa do ran ban dau  
     call in_ran                         ;in hinh con ran ban dau
     ;khoi tao 5 qua tao ban dau
-    mov cx, 10D      ;so qua tao ban dau luu vao thanh ghi cx = 5
+    xor ch,ch
+    mov cl, score_max      ;so qua tao ban dau luu vao thanh ghi cx = 5
     sinh_tao_ban_dau:
          call sinh_apple        ;goi chuong trinh con sinh ngau nhien 1 qua tao
     loop sinh_tao_ban_dau
@@ -295,7 +296,7 @@ sang_phai:
         je game_over                    ;neu co thi thua luon  
         
         ;kiem tra con ran co dam vao chinh khuc cua minh khong
-        cmp al, 'x'                     ;so sanh ki tu voi ki tu than cua con ran
+        cmp al, than_ran                     ;so sanh ki tu voi ki tu than cua con ran
         je game_over                    ;nhay toi nhan thua cuoc
        
         ;con ran co an qua tao khong
@@ -319,7 +320,7 @@ sang_phai:
         ; In ð?u m?i (không c?n g?i l?i in_ran)
         mov al, snake_x
         mov bl, snake_y
-        gan_toa_do al, bl, 'x'                 ;in ð?u m?i
+        gan_toa_do al, bl, than_ran                 ;in ð?u m?i
                      
         jmp game_loop                          ;tiep tuc tro choi
     
@@ -338,7 +339,7 @@ sang_phai:
         ; In ð?u m?i
         mov al, snake_x
         mov bl, snake_y
-        gan_toa_do al, bl, 'x'   ; in ð?u m?i
+        gan_toa_do al, bl,than_ran   ; in ð?u m?i
 
         jmp game_loop
     
@@ -357,7 +358,7 @@ sinh_apple proc
     mov ah, 8                       ;chon che do doc ki tu tai vi tri con tro ham ngat 10h/08h
     mov bh, 0                       ;so trang man hinh
     int 10h
-    cmp al,'x'                  ;kiem tra vi tri co trung voi dau ran khong
+    cmp al,than_ran                  ;kiem tra vi tri co trung voi dau ran khong
     je sinh 
     cmp al,'O'                      ;kiem tra vi tri co trung voi 1 qua tao khac khong
     je sinh
@@ -388,7 +389,7 @@ in_ran proc
         inc di                             ;tang chi so si
         jmp lapin                          ;lap lai vong lap in than con ran
     ket:                        
-        gan_toa_do [di], [si], 'x'         ;in dau con ran
+        gan_toa_do [di], [si],than_ran         ;in dau con ran
     ret
 in_ran endp 
 
